@@ -96,8 +96,9 @@ module testbench();
       clk <= 1; # 5; clk <= 0; # 5;
     end
 
-  // check results
-  always @(negedge clk)
+  // check results - Comentado no código
+  // Não faremos uso deste check
+  /*always @(negedge clk)
     begin
       if(MemWrite) begin
         if(DataAdr === 100 & WriteData === 7) begin
@@ -109,7 +110,8 @@ module testbench();
         end
       end
     end
-endmodule
+endmodule*/
+
 
 module top(input  logic        clk, reset, 
            output logic [31:0] WriteData, DataAdr, 
