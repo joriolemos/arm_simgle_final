@@ -187,12 +187,16 @@ module decoder(input  logic [1:0] Op,
                input  logic [3:0] Rd,
                output logic [1:0] FlagW,
                output logic       PCS, RegW, MemW,
-               output logic       MemtoReg, ALUSrc, MovF, NoWrite,
+               output logic       MemtoReg, ALUSrc, NoWrite,
+               output logic       MovF,
                output logic [1:0] ImmSrc, RegSrc,
                output logic [2:0] ALUControl);
 
   logic [9:0] controls;
   logic       Branch, ALUOp;
+
+    assign {RegSrc, ImmSrc, ALUSrc, MemtoReg, 
+          RegW, MemW, Branch, ALUOp} = controls; 
 
   // Main Decoder
   
@@ -212,9 +216,6 @@ module decoder(input  logic [1:0] Op,
   	  default:              controls = 10'bx;          
   	endcase
 
-  assign {RegSrc, ImmSrc, ALUSrc, MemtoReg, 
-          RegW, MemW, Branch, ALUOp} = controls; 
-          
   // ALU Decoder             
   always_comb
     if (ALUOp) begin             // which DP Instr?
@@ -244,6 +245,21 @@ module decoder(input  logic [1:0] Op,
             NoWrite = 1'b0;
             MovF = 1'b1;
           end
+          4'b1010: begin
+            ALUControl = 3'b001;   // CMP executado com o SUB
+            NoWrite = 1'b1;
+            MovF = 1'b0;
+          end
+          4'b1000: begin
+            ALUControl = 3'b010;   // TST executado com o AND
+            NoWrite = 1'b1;
+            MovF = 1'b0;
+          end
+          4'b0001: begin
+            ALUControl = 3'b100;   // XOR
+            NoWrite = 1'b0;
+            MovF = 1'b0;
+          end
           default:
             ALUControl = 3'bx;
 
@@ -258,7 +274,7 @@ module decoder(input  logic [1:0] Op,
 
     end else begin
       ALUControl = 3'b000; // add for non-DP instructions
-      FlagW      = 3'b000; // don't update Flags
+      FlagW      = 2'b00; // don't update Flags .
     end
          
   // PC Logic
