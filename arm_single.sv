@@ -265,17 +265,17 @@ module decoder(input  logic [1:0] Op,
             MovF = 1'b0;
           end
           4'b1101: begin
-            ALUControl = 3'bx;   // MOV
+            ALUControl = 3'bx;   // MOV Decoder / Alu Decoder / Condlogic / controler / data path / ARM
             NoWrite = 1'b0;
             MovF = 1'b1;
           end
           4'b1010: begin
-            ALUControl = 3'b001;   // CMP executado com o SUB
+            ALUControl = 3'b001;   // CMP executado com o SUB Decoder / Alu Decoder / Condlogic / Controller / 
             NoWrite = 1'b1;
             MovF = 1'b0;
           end
           4'b1000: begin
-            ALUControl = 3'b010;   // TST executado com o AND
+            ALUControl = 3'b010;   // TST executado com o AND Decoder / Alu Decoder / Condlogic / Controller / 
             NoWrite = 1'b1;
             MovF = 1'b0;
           end
@@ -309,7 +309,7 @@ module condlogic(input  logic       clk, reset,
                  input  logic [3:0] Cond,
                  input  logic [3:0] ALUFlags,
                  input  logic [1:0] FlagW,
-                 input  logic       PCS, RegW, MemW, NoWrite, NoWrite2 MovF, LSBF,
+                 input  logic       PCS, RegW, MemW, NoWrite, NoWrite2, MovF, LSBF,
                  output logic       PCSrc, RegWrite, MemWrite, MovFlag, LSBFlag);
                  
   logic [1:0] FlagWrite;
