@@ -173,13 +173,13 @@ module controller(input  logic         clk, reset,
                   output logic         PCSrc);
 
   logic [1:0] FlagW;
-  logic       PCS, RegW, MemW, NoWrite, MovF, LSBF;
+  logic       PCS, RegW, MemW, NoWrite, NoWrite2, MovF, LSBF;
   
   decoder dec(Instr[27:26], Instr[25:20], Instr[15:12],
               FlagW, PCS, RegW, MemW,
-              MemtoReg, ALUSrc, NoWrite, MovF, LSBF, ImmSrc, RegSrc, ALUControl);
+              MemtoReg, ALUSrc, NoWrite, NoWrite2, MovF, LSBF, ImmSrc, RegSrc, ALUControl);
   condlogic cl(clk, reset, Instr[31:28], ALUFlags,
-               FlagW, PCS, RegW, MemW, NoWrite, MovF, LSBF,
+               FlagW, PCS, RegW, MemW, NoWrite, NoWrite2, MovF, LSBF,
                PCSrc, RegWrite, MemWrite, MovFlag, LSBFlag);
 endmodule
 
@@ -188,7 +188,7 @@ module decoder(input  logic [1:0] Op,
                input  logic [3:0] Rd,
                output logic [1:0] FlagW,
                output logic       PCS, RegW, MemW,
-               output logic       MemtoReg, ALUSrc, NoWrite, 
+               output logic       MemtoReg, ALUSrc, NoWrite, NoWrite2,
                output logic       MovF, LSBF,
                output logic [1:0] ImmSrc, RegSrc,
                output logic [2:0] ALUControl);
@@ -204,21 +204,25 @@ module decoder(input  logic [1:0] Op,
   	  2'b00: if (Funct[5])  begin 
                             controls = 10'b0000101001;
                             LSBF     = 1'b0;
+                            NoWrite2 = 1'b1;
                         end
   	                        // Data processing register
   	         else           begin
                             controls = 10'b0000001001;
                             LSBF     = 1'b0;
+                            NoWrite2 = 1'b1;
                         end
   	                        // LDR
   	  2'b01: if (Funct[0])  begin 
                             controls = 10'b0001111000;
                             LSBF     = Funct[2];
+                            NoWrite2 = 1'b0;
                         end
   	                        // STR
   	         else           begin
                             controls = 10'b1001110100;
                             LSBF     = Funct[2];
+                            NoWrite2 = 1'b0;
                         end
   	                        // B
   	  2'b10:                begin
@@ -305,7 +309,7 @@ module condlogic(input  logic       clk, reset,
                  input  logic [3:0] Cond,
                  input  logic [3:0] ALUFlags,
                  input  logic [1:0] FlagW,
-                 input  logic       PCS, RegW, MemW, NoWrite, MovF, LSBF,
+                 input  logic       PCS, RegW, MemW, NoWrite, NoWrite2 MovF, LSBF,
                  output logic       PCSrc, RegWrite, MemWrite, MovFlag, LSBFlag);
                  
   logic [1:0] FlagWrite;
@@ -320,7 +324,7 @@ module condlogic(input  logic       clk, reset,
   // write controls are conditional
   condcheck cc(Cond, Flags, CondEx);
   assign FlagWrite = FlagW & {2{CondEx}};
-  assign RegWrite  = RegW  & CondEx & ~(NoWrite);
+  assign RegWrite  = RegW  & CondEx & ~(NoWrite & NoWrite2);
   assign MemWrite  = MemW  & CondEx;
   assign PCSrc     = PCS   & CondEx;
   assign MovFlag   = MovF  & CondEx;
