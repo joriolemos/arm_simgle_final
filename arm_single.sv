@@ -517,8 +517,8 @@ module LSB(input  logic [31:0] a, b,
   always_comb
     casex (LSBControl)
       1'b1: begin
-        toMem = {28'b0, a[3:0]};
-        toReg = {28'b0, b[3:0]};
+        toMem = {24'b0, a[7:0]};
+        toReg = {24'b0, b[7:0]};
       end
       1'b0: begin
         toMem = a;
