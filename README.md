@@ -28,3 +28,6 @@ Vamos inserir um sinal MovF em Decoder (// ALU Decoder)
 Alterar ALU para poder ter mais opções de operações.
     Obs.: Vamos fazer isso pois já sabemos que teremos que acrescentar pelo  menos mais uma operação depois dessa (XOR).
     Foi lançada a operação XOR.
+
+Durante o vídeo do professor Dr. Raphael Emerick aparece um sinal NoWrite
+Ele já foi implementado pois será util em breve.
